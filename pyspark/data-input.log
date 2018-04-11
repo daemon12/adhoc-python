@@ -1,0 +1,26 @@
+16/05/01 15:32:28 ERROR FileAppender: Error writing stream to file /opt/spark-1.5.2-bin-hadoop2.4/work/app-20160501151716-0000/1/stderr
+java.io.IOException: Stream closed
+    at java.io.BufferedInputStream.getBufIfOpen(BufferedInputStream.java:170)
+    at java.io.BufferedInputStream.read1(BufferedInputStream.java:283)
+    at java.io.BufferedInputStream.read(BufferedInputStream.java:345)
+    at java.io.FilterInputStream.read(FilterInputStream.java:107)
+    at org.apache.spark.util.logging.FileAppender.appendStreamToFile(FileAppender.scala:70)
+    at org.apache.spark.util.logging.FileAppender$$anon$1$$anonfun$run$1.apply$mcV$sp(FileAppender.scala:39)
+    at org.apache.spark.util.logging.FileAppender$$anon$1$$anonfun$run$1.apply(FileAppender.scala:39)
+    at org.apache.spark.util.logging.FileAppender$$anon$1$$anonfun$run$1.apply(FileAppender.scala:39)
+    at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:1699)
+    at org.apache.spark.util.logging.FileAppender$$anon$1.run(FileAppender.scala:38)
+16/05/01 15:32:28 ERROR FileAppender: Error writing stream to file /opt/spark-1.5.2-bin-hadoop2.4/work/app-20160501151716-0000/1/stderr
+16/05/01 15:32:28 ERROR FileAppender: Error writing stream to file /opt/spark-1.5.2-bin-hadoop2.4/work/app-20160501151716-0000/1/stderr
+16/05/01 15:32:28 ERROR FileAppender: Error writing stream to file /opt/spark-1.5.2-bin-hadoop2.4/work/app-20160501151716-0000/1/stderr
+java.io.IOException: Stream closed
+    at java.io.BufferedInputStream.getBufIfOpen(BufferedInputStream.java:170)
+    at java.io.BufferedInputStream.read1(BufferedInputStream.java:283)
+    at java.io.BufferedInputStream.read(BufferedInputStream.java:345)
+    at java.io.FilterInputStream.read(FilterInputStream.java:107)
+    at org.apache.spark.util.logging.FileAppender.appendStreamToFile(FileAppender.scala:70)
+    at org.apache.spark.util.logging.FileAppender$$anon$1$$anonfun$run$1.apply$mcV$sp(FileAppender.scala:39)
+    at org.apache.spark.util.logging.FileAppender$$anon$1$$anonfun$run$1.apply(FileAppender.scala:39)
+    at org.apache.spark.util.logging.FileAppender$$anon$1$$anonfun$run$1.apply(FileAppender.scala:39)
+    at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:1699)
+    at org.apache.spark.util.logging.FileAppender$$anon$1.run(FileAppender.scala:38)
