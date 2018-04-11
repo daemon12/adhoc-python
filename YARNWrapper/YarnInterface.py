@@ -6,6 +6,7 @@ Created on Wed Apr 11 11:01:23 2018
 @author: pradeep
 
 Python wrapper for YARN Applications
+TBD: Extended
 """
 from knit import Knit
 
