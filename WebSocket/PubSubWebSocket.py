@@ -1,4 +1,14 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Apr 12 11:52:12 2018
+
+@author: pradeep
+
+The script subscribes to the specified topic and records the said number of 
+frames. Returns the recorded data in a dict.
+"""
+
 import websocket
 import json
 from collections import defaultdict
