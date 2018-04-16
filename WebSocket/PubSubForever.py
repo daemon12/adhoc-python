@@ -12,14 +12,13 @@ frames. The recorded data is saved in the respective topic files.
 '--flush' is #frames after which the frames are written to file
 '--unsubscribe' is #frames after which a random topic is unsubscribed
 """
-import argparse
-import json
+import argparse, json, logging, os
 import websocket
 from random import randint
 from collections import defaultdict
 
 class PubSubForever:
-    def __init__(self, topics, socket, wrt = 10, uns = 100):
+    def __init__(self, topics, socket, wrt = 10, uns = 15):
         self.cnt = self.old = self.new = 0
         self.ws = None
         self.wrt = wrt
@@ -27,12 +26,16 @@ class PubSubForever:
         self.topics = topics
         self.socket = socket        
         self.store = defaultdict(list)
-
+        self.log = self.get_logger()
+        self.log.info("INPUTS: Topics: "+str(topics)+" Socket: " +
+                      socket+", Write: "+str(wrt)+", Unsubsscribe: "+str(uns))
+        
     def on_message(self, ws, message):
         self.cnt += 1
         data = json.loads(message)
         topic = data['topic']
-        print self.cnt,topic
+        if self.cnt % 100 == 0:
+            self.log.info(str(self.cnt) + " " + topic)
         self.store[topic].append(data)
         if self.cnt % self.wrt == 0:
             self.write_to_file()
@@ -40,23 +43,35 @@ class PubSubForever:
             self.unsubscribe()
             
     def on_error(self, ws, error):
-        print "\nON_ERROR: ", error
+        self.log.error(str(error) + "Exiting the infinite loop!")
     
     def on_close(self, ws):
         self.ws.close()
     
     def on_open(self, ws):
-        print "Subscribing topics:"
+        self.log.info("Subscribing topics:")
         for t in self.topics:
             self.ws.send('{"type":"subscribe","topic":"%s"}' % t)
-            print "\tSubscribed: " + t
-        print "All topics subscribed!"
-        for t in self.topics:
-            self.ws.send('{"type":"subscribe","topic":"%s"}' % t)
-            print "\tSubscribed: " + t
-        print "All topics subscribed!"
+            self.log.info("\tSubscribed: " + t)
+        self.log.info("All topics subscribed!")
                 
+    def get_logger(self):
+        #FORMAT = "[%(asctime)s %(levelname)s %(filename)s:%(lineno)s "
+        #FORMAT = FORMAT + "%(funcName)10s()] %(message)s"
+        FORMAT = "%(asctime)s %(levelname)8s%(lineno)3s %(message)s"
+        formatter = logging.Formatter(FORMAT)
+        log_name = os.path.join(os.path.basename(__file__)+".log")
+        logging.basicConfig(format=FORMAT, filename=str(log_name))        
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        ch.setFormatter(formatter)
+        logger.addHandler(ch)
+#        logger.addHandler(logging.StreamHandler().setFormatter(formatter))
+        return logger
+        
     def write_to_file(self):
+        self.log.info("Writing to topic files")
         for t in self.topics:
             fh = open(t+".txt", "a+")
             for msg in self.store[t]:
@@ -65,15 +80,15 @@ class PubSubForever:
         self.store = defaultdict(list)
     
     def unsubscribe(self):
-        print "Unsubscibing @counter:", self.cnt
+        self.log.info("Unsubscibing @counter:"+ str(self.cnt))
         self.new = randint(0,len(self.topics)-1)
         if self.new != self.old:
             self.ws.send('{"type":"unsubscribe","topic":"%s"}' % 
                          self.topics[self.new])
             self.ws.send('{"type":"subscribe","topic":"%s"}' % 
                          self.topics[self.old])
-            print "\tUnsubscribed:", self.topics[self.new]
-            print "\tSubscribed:", self.topics[self.old]            
+            self.log.info("\tUnsubscribed:"+ self.topics[self.new])
+            self.log.info("\tSubscribed:"+ self.topics[self.old])   
             self.old = self.new
     
     def on_call(self):
@@ -97,12 +112,9 @@ if __name__ == '__main__':
     parser=argparse.ArgumentParser()    
     parser.add_argument('--topics', '-t', required=True, nargs='*')
     parser.add_argument('--socket', '-s', default='ws://jarvis:9090/pubsub')
-    parser.add_argument('--flush', '-f', default=100)
-    parser.add_argument('--unsubscribe', '-u', default=100)
+    parser.add_argument('--write', '-w', default=10, type=int)
+    parser.add_argument('--unsubscribe', '-u', default=15, type=int)
     args=parser.parse_args()
-    print("INPUTS: \n\tTopics: %s\n\tSocket: %s, Flush: %s, Unsubsscribe: %s"
-          % (str(args.topics), args.socket, args.flush, args.unsubscribe))
     
-    psf = PubSubForever(args.topics, args.socket, args.flush, args.unsubscribe)
+    psf = PubSubForever(args.topics, args.socket, args.write, args.unsubscribe)
     psf.on_call()
-    print "Done!!!!"
