@@ -1,14 +1,14 @@
 import urllib2
 import re
 
-urls = ["http://dl8.heyserver.in/film/"]
+urls = ["http://dl5.filmha.co/2018/film/khareji/"]
 movies = list()
 counter = 0
 while len(urls) != 0:
-    print("Number of urls: %s" % len(urls))
+    print("\nNumber of urls: %s" % len(urls))
     mylurls = list()
     for url in urls:
-        # page = urllib2.urlopen(url)
+        print".",
         page = urllib2.urlopen(url).read()
         links = re.findall(r"<a.*?\s*href=\"(.*?)\".*?>.*?</a>", page)
         for link in links:
